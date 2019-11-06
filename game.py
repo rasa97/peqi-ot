@@ -4,8 +4,14 @@ import random
 
 import sender
 import receiver
+from daemon_thread import DaemonThread
+import time
+import threading
 import communication
 import utils
+
+sender = sender.Sender()
+receiver = receiver.Receiver()
 
 class GameBoard(tk.Frame):
     def __init__(self, parent, rows=3, columns=3, size=128, color1="white", color2="blue"):
@@ -135,15 +141,65 @@ class GameBoard(tk.Frame):
         self.canvas.tag_lower("square")
 
     def xCallBack(self):
-        #oblivious_tranfer(x)
-        x_arr = [self.enemyx]
-        y_arr = [self.enemyy]
-        
-        tkinter.messagebox.showinfo( "X", str(self.enemyx))
+        # oblivious_tranfer(y)
+        if self.enemyx == 0:
+            x_arr = [0, 0]
+        elif self.enemyx == 1:
+            x_arr = [1, 0]
+        else:
+            x_arr = [0, 1]
+
+        y_arr = [1, 1]
+
+        res = []
+
+        t = threading.Thread(target=sender.execute_string_ot, args=(x_arr, y_arr))
+        # DaemonThread(sender.execute_string_ot, args=(x_arr , y_arr))
+        k = threading.Thread(target=lambda q, arg1, arg2: q.append(receiver.execute_string_ot(arg1, arg2)),
+                             args=(res, 0, 2))
+        # DaemonThread(receiver.executimport threadınge_string_ot, args=(1,2))
+
+        t.start()
+        k.start()
+
+        t.join()
+        k.join()
+
+        val = res[0][0] + 2 * res[0][1]
+
+        #print(val)
+
+        tkinter.messagebox.showinfo( "X", str(val))
 
     def yCallBack(self):
         #oblivious_tranfer(y)
-        tkinter.messagebox.showinfo( "Y", str(self.enemyy))
+        if self.enemyy == 0:
+            y_arr = [0, 0]
+        elif self.enemyy == 1:
+            y_arr = [1, 0]
+        else:
+            y_arr = [0, 1]
+
+        x_arr = [1, 1]
+
+        res = []
+
+        t = threading.Thread(target=sender.execute_string_ot, args=(x_arr,y_arr))
+        #DaemonThread(sender.execute_string_ot, args=(x_arr , y_arr))
+        k = threading.Thread(target=lambda q,arg1,arg2: q.append(receiver.execute_string_ot(arg1,arg2)), args=(res,1,2))
+        #DaemonThread(receiver.executimport threadınge_string_ot, args=(1,2))
+
+        t.start()
+        k.start()
+
+        t.join()
+        k.join()
+
+        val = res[0][0] + 2* res[0][1]
+
+        #print(val)
+
+        tkinter.messagebox.showinfo( "Y", str(val))
         
 
 

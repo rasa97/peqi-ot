@@ -10,7 +10,7 @@ class Sender(object):
         self.cqc = None
         self.name = name
 
-        self.N = 16
+        self.N = 10
 
         # self.cqc = CQCConnection(self.name)
 
@@ -132,5 +132,5 @@ class Sender(object):
 
 if __name__ == "__main__":
     sender = Sender()
-    sender.execute_string_ot([0]*4, [1]*4)
+    sender.execute_string_ot([0,1,0,1], [1,0,1,0])
     # sender.send_msg()

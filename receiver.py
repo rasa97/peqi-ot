@@ -10,7 +10,7 @@ class Receiver(object):
         self.cqc = None
         self.name = name
 
-        self.N = 16
+        self.N =10
 
         # self.cqc = CQCConnection(self.name)
 
@@ -118,6 +118,7 @@ class Receiver(object):
         e.append([int(x) for x in receive_message(self.cqc, sender)])
         e.append([int(x) for x in receive_message(self.cqc, sender)])
         ac = list((np.asarray(e[c], dtype=np.uint8) + rc)%2)
+        #print(ac)
         return ac
 
     def execute_string_ot(self, n, sender="Alice", cqc=None):
