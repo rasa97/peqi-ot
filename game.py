@@ -1,12 +1,6 @@
-# import sys
-
-# alice_x, alice_y = sys.argv[1], sys.argv[2]
-# bob_x = oblivious_tranfer("Bob")
-
-# dx = alice_x - bobx_x
-
 import tkinter as tk
 import tkinter.messagebox
+import random
 
 class GameBoard(tk.Frame):
     def __init__(self, parent, rows=3, columns=3, size=128, color1="white", color2="blue"):
@@ -20,6 +14,15 @@ class GameBoard(tk.Frame):
         self.pieces = {}
         self.xcord = 0
         self.ycord = 0
+        self.points = 0
+
+        self.enemyx = random.randint(0,2)
+        self.enemyy = random.randint(0,2)
+
+        while(self.enemyx == 0 and self.enemyy == 0):
+            self.enemyx = random.randint(0,2)
+            self.enemyy = random.randint(0,2)
+
 
         canvas_width = columns * size
         canvas_height = rows * size
@@ -42,31 +45,40 @@ class GameBoard(tk.Frame):
         if(self.ycord > 0):
             self.ycord = self.ycord - 1
             self.placepiece("player1", self.xcord, self.ycord)
-            tkinter.messagebox.showinfo("Information","Left key pressed")
+            self.afterMove()
     
     def rightKey(self, event):
         if(self.ycord < 2):
             self.ycord = self.ycord + 1
             self.placepiece("player1", self.xcord, self.ycord)
-            tkinter.messagebox.showinfo("Information","Right key pressed")
+            self.afterMove()
 
     def upKey(self, event):
         if(self.xcord > 0):
             self.xcord = self.xcord - 1
             self.placepiece("player1", self.xcord, self.ycord)
-            tkinter.messagebox.showinfo("Information","Up key pressed")
+            self.afterMove()
 
     def downKey(self, event):
         if(self.xcord < 2):
             self.xcord = self.xcord + 1
             self.placepiece("player1", self.xcord, self.ycord)
-            tkinter.messagebox.showinfo("Information","Down key pressed")
+            self.afterMove()
+
+    def afterMove(self):
+        if(self.xcord == self.enemyx and self.ycord==self.enemyy):
+            print("Collision! Points = ", self.points)
+            tkinter.messagebox.showinfo("Collision","Collision\nPoints : "+str(self.points))
+        else:
+            self.points=self.points+1
+            tkinter.messagebox.showinfo("Information","Points : "+str(self.points))
         
 
     def addpiece(self, name, image, row=0, column=0):
         '''Add a piece to the playing board'''
         self.canvas.create_image(0,0, image=image, tags=(name, "piece"), anchor="c")
         self.placepiece(name, row, column)
+        print("Enemy is at : ", self.enemyx, self.enemyy)
 
     def placepiece(self, name, row, column):
         '''Place a piece at the given row/column'''
@@ -96,6 +108,8 @@ class GameBoard(tk.Frame):
         self.canvas.tag_raise("piece")
         self.canvas.tag_lower("square")
 
+        
+
 
 # image comes from the silk icon set which is under a Creative Commons
 # license. For more information see http://www.famfamfam.com/lab/icons/silk/
@@ -121,7 +135,13 @@ imagedata = '''
     yxYYEAA7
 '''
 
+def xCallBack():
+    #oblivious_tranfer(x)
+    tkinter.messagebox.showinfo( "X", "Hello World")
 
+def yCallBack():
+    #oblivious_tranfer(y)
+   tkinter.messagebox.showinfo( "Y", "Hello World")
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -129,4 +149,9 @@ if __name__ == "__main__":
     board.pack(side="top", fill="both", expand="true", padx=4, pady=4)
     player1 = tk.PhotoImage(data=imagedata)
     board.addpiece("player1", player1, 0,0)
+
+    B1 = tk.Button(root, text ="Get X", command = xCallBack)
+    B2 = tk.Button(root, text ="Get Y", command = yCallBack)
+    B1.pack()
+    B2.pack()
     board.mainloop()
