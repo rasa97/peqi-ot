@@ -1,3 +1,10 @@
+# import sys
+
+# alice_x, alice_y = sys.argv[1], sys.argv[2]
+# bob_x = oblivious_tranfer("Bob")
+
+# dx = alice_x - bobx_x
+
 import tkinter as tk
 import tkinter.messagebox
 import random
@@ -45,25 +52,46 @@ class GameBoard(tk.Frame):
         if(self.ycord > 0):
             self.ycord = self.ycord - 1
             self.placepiece("player1", self.xcord, self.ycord)
+            self.enemyMove()
             self.afterMove()
     
     def rightKey(self, event):
         if(self.ycord < 2):
             self.ycord = self.ycord + 1
             self.placepiece("player1", self.xcord, self.ycord)
+            self.enemyMove()
             self.afterMove()
 
     def upKey(self, event):
         if(self.xcord > 0):
             self.xcord = self.xcord - 1
             self.placepiece("player1", self.xcord, self.ycord)
+            self.enemyMove()
             self.afterMove()
 
     def downKey(self, event):
         if(self.xcord < 2):
             self.xcord = self.xcord + 1
             self.placepiece("player1", self.xcord, self.ycord)
+            self.enemyMove()
             self.afterMove()
+
+    def enemyMove(self):
+        vec = random.randint(0,3)
+        if(vec==0):
+            if(self.enemyy > 0):
+                self.enemyy = self.enemyy - 1
+        elif(vec==1):
+            if(self.enemyy < 2):
+                self.enemyy = self.enemyy + 1
+        elif(vec==2):
+            if(self.enemyx > 0):
+                self.enemyx = self.enemyx - 1
+        else:
+            if(self.enemyx < 2):
+                self.enemyx = self.enemyx + 1
+        
+        print("New enemy pos : ", self.enemyx, self.enemyy)
 
     def afterMove(self):
         if(self.xcord == self.enemyx and self.ycord==self.enemyy):
