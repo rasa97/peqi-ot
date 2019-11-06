@@ -4,7 +4,6 @@ import random
 
 import sender
 import receiver
-from daemon_thread import DaemonThread
 import time
 import threading
 import communication
