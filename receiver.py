@@ -102,7 +102,6 @@ class Receiver(object):
         rc = []
         for _ in range(0, n):
             rc.append(self.execute_bit_ot(c))
-        print(rc)
         m = []
         k = int(n/2)
         m.append(np.asarray(list(receive_message(self.cqc, sender)), dtype=np.uint8).reshape(k, n))
@@ -119,7 +118,6 @@ class Receiver(object):
         e.append([int(x) for x in receive_message(self.cqc, sender)])
         e.append([int(x) for x in receive_message(self.cqc, sender)])
         ac = list((np.asarray(e[c], dtype=np.uint8) + rc)%2)
-        print(ac)
         return ac
 
     def execute_string_ot(self, n, sender="Alice", cqc=None):
