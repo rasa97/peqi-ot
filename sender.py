@@ -1,4 +1,5 @@
 from cqc.pythonLib import CQCConnection, qubit
+from communication import send_message, receive_message
 
 import random
 
@@ -36,19 +37,14 @@ class Sender(object):
                 q.H()
 
             self.cqc.sendQubit(q, receiver)
-            # qubit_received = communication.receive_message(self.cqc, self.receiver_pkey)
-            # print_progress_bar(i, self.N-1)
-
-        # done_receiving = communication.receive_message(self.cqc, self.receiver_pkey)
-        # assert done_receiving == 'DONE'
 
     
     def send_basis_information(self, receiver):
-        self.cqc.sendClassical(receiver, self.basis_list)
+        send_message(self.cqc, receiver, self.basis_list)
 
-    def receive_sets(self):
-        set0 = [int(x) for x in self.cqc.recvClassical()]
-        set1 = [int(x) for x in self.cqc.recvClassical()]
+    def receive_sets(self, receiver):
+        set0 = [int(x) for x in receive_message(self.cqc, receiver)]
+        set1 = [int(x) for x in receive_message(self.cqc, receiver)]
         return set0, set1
         
     def send_parities_addresses(self, receiver, sets):
@@ -58,26 +54,26 @@ class Sender(object):
                 if random.randint(0,1):
                     parities[i].append(j)
 
-        self.cqc.sendClassical(receiver, parities[0])
-        self.cqc.sendClassical(receiver, parities[1])
+        send_message(self.cqc, receiver, parities[0])
+        send_message(self.cqc, receiver, parities[1])
 
         calculated_parities = [0, 0]
         for i in range(0, len(parities)):
             for j in range(0, len(parities[i])):
-                calculated_parities[i] = (calculated_parities[i] + parities[i][j]) % 2 
+                calculated_parities[i] = (calculated_parities[i] + sets[i][parities[i][j]]) % 2 
 
         return calculated_parities
 
-    def receive_decision(self):
-        return int(self.cqc.recvClassical())
+    def receive_decision(self, receiver):
+        return int.from_bytes(receive_message(self.cqc, receiver), 'little')
 
     def send_final_strings(self, receiver, parities, decision):
         msgs = []
-        msgs.append((parities[0] + self.transfer_bits[decision])%2)
-        msgs.append((parities[1] + self.transfer_bits[not decision])%2)
+        msgs.append((parities[0] + self.transfer_bits[not decision])%2)
+        msgs.append((parities[1] + self.transfer_bits[decision])%2)
 
-        self.cqc.sendClassical(receiver, msgs[0])
-        self.cqc.sendClassical(receiver, msgs[1])
+        send_message(self.cqc, receiver, msgs[0])
+        send_message(self.cqc, receiver, msgs[1])
 
 
     def execute(self, receiver="Bob"):
@@ -86,11 +82,11 @@ class Sender(object):
             print("sending basis")
             self.send_basis_information(receiver)
             print("receiving sets")
-            sets = self.receive_sets()
+            sets = self.receive_sets(receiver)
             print("sending parities")
             parities = self.send_parities_addresses(receiver, sets)
             print("receiving choice")
-            decision = self.receive_decision()
+            decision = self.receive_decision(receiver)
             print("sending final strings")
             self.send_final_strings(receiver, parities, decision)
 
