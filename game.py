@@ -1,13 +1,11 @@
-# import sys
-
-# alice_x, alice_y = sys.argv[1], sys.argv[2]
-# bob_x = oblivious_tranfer("Bob")
-
-# dx = alice_x - bobx_x
-
 import tkinter as tk
 import tkinter.messagebox
 import random
+
+import sender
+import receiver
+import communication
+import utils
 
 class GameBoard(tk.Frame):
     def __init__(self, parent, rows=3, columns=3, size=128, color1="white", color2="blue"):
@@ -136,6 +134,16 @@ class GameBoard(tk.Frame):
         self.canvas.tag_raise("piece")
         self.canvas.tag_lower("square")
 
+    def xCallBack(self):
+        #oblivious_tranfer(x)
+        x_arr = [self.enemyx]
+        y_arr = [self.enemyy]
+        
+        tkinter.messagebox.showinfo( "X", str(self.enemyx))
+
+    def yCallBack(self):
+        #oblivious_tranfer(y)
+        tkinter.messagebox.showinfo( "Y", str(self.enemyy))
         
 
 
@@ -163,14 +171,6 @@ imagedata = '''
     yxYYEAA7
 '''
 
-def xCallBack():
-    #oblivious_tranfer(x)
-    tkinter.messagebox.showinfo( "X", "Hello World")
-
-def yCallBack():
-    #oblivious_tranfer(y)
-   tkinter.messagebox.showinfo( "Y", "Hello World")
-
 if __name__ == "__main__":
     root = tk.Tk()
     board = GameBoard(root)
@@ -178,8 +178,8 @@ if __name__ == "__main__":
     player1 = tk.PhotoImage(data=imagedata)
     board.addpiece("player1", player1, 0,0)
 
-    B1 = tk.Button(root, text ="Get X", command = xCallBack)
-    B2 = tk.Button(root, text ="Get Y", command = yCallBack)
+    B1 = tk.Button(root, text ="Get X", command = board.xCallBack)
+    B2 = tk.Button(root, text ="Get Y", command = board.yCallBack)
     B1.pack()
     B2.pack()
     board.mainloop()
